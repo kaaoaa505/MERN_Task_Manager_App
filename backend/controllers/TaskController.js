@@ -59,7 +59,10 @@ const deleteTask = async (req, res) => {
 const updateTask = async (req, res) => {
     try {
         const { id } = req.params;
-        const task = await TaskModel.findByIdAndUpdate({_id: id}, req.body, {new: true});
+        const task = await TaskModel.findByIdAndUpdate({_id: id}, req.body, {
+            new: true,
+            runValidators: true
+        });
 
         if(!task)
             return res.status(StatusCodes.NOT_FOUND).json({error: `Task with id ${id} Not-Found.`});
