@@ -15,7 +15,6 @@ const createTask = async (req, res) => {
 
         return res.status(StatusCodes.OK).json(task);
     } catch (error) {
-        console.log(error);
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: error.message });
     }
 };
@@ -25,7 +24,6 @@ const allTasks = async (_req, res) => {
         const tasks = await TaskModel.find();
         return res.status(StatusCodes.OK).json(tasks);
     } catch (error) {
-        console.log(error);
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: error.message });
     }
 };
@@ -40,7 +38,6 @@ const getTask = async (req, res) => {
 
         return res.status(StatusCodes.OK).json(task);
     } catch (error) {
-        console.log(error);
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: error.message });
     }
 };
@@ -52,11 +49,25 @@ const deleteTask = async (req, res) => {
 
         if(!task)
             return res.status(StatusCodes.NOT_FOUND).json({error: `Task with id ${id} Not-Found.`});
+
         return res.status(StatusCodes.NO_CONTENT).json({});
     } catch (error) {
-        console.log(error);
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: error.message });
     }
 };
 
-module.exports = { createTask, allTasks, getTask, deleteTask };
+const updateTask = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const task = await TaskModel.findByIdAndUpdate({_id: id}, req.body, {new: true});
+
+        if(!task)
+            return res.status(StatusCodes.NOT_FOUND).json({error: `Task with id ${id} Not-Found.`});
+
+        return res.status(StatusCodes.ACCEPTED).json(task);
+    } catch (error) {
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: error.message });
+    }
+};
+
+module.exports = { createTask, allTasks, getTask, deleteTask, updateTask };
