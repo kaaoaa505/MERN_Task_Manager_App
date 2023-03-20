@@ -16,7 +16,7 @@ const createTask = async (req, res) => {
         return res.status(StatusCodes.OK).json(task);
     } catch (error) {
         console.log(error);
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error });
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: error.message });
     }
 };
 
@@ -26,7 +26,7 @@ const allTasks = async (_req, res) => {
         return res.status(StatusCodes.OK).json(tasks);
     } catch (error) {
         console.log(error);
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error });
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: error.message });
     }
 };
 
@@ -41,7 +41,7 @@ const getTask = async (req, res) => {
         return res.status(StatusCodes.OK).json(task);
     } catch (error) {
         console.log(error);
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error });
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: error.message });
     }
 };
 
