@@ -11,6 +11,9 @@ app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 app.use(taskRoutes);
 
+app.get('/', (_req, res) => {
+    res.send('Home page')
+});
 
 const serverStart = async () => {
     try {
