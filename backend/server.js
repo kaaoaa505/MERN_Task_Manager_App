@@ -3,8 +3,6 @@ require('dotenv').config();
 const express = require('express');
 const DbConnect = require('./config/DbConnect');
 
-
-
 const app = express();
 
 app.get('/', (req, res) => {
@@ -28,5 +26,4 @@ const serverStart = async () => {
         console.log(error);
     }
 };
-
 serverStart();
