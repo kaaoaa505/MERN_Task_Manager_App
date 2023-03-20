@@ -9,6 +9,11 @@ app.get('/', (req, res) => {
     res.send('Home page')
 });
 
+app.post('/api/tasks', (req, res) => {
+    console.log(req.body);
+    res.send('Task created successfully')
+})
+
 const serverStart = async () => {
     try {
         await DbConnect();
