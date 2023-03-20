@@ -1,41 +1,16 @@
 require('dotenv').config();
 
 const express = require('express');
-const HttpStatusCodes = require('http-status-codes');
 
 const DbConnect = require('./config/DbConnect');
-const Logger = require('./middlewares/Logger');
-const TaskModel = require('./models/TaskModel');
+
+const taskRoutes = require('./routes/TaskRoutes');
 
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
+app.use(taskRoutes);
 
-const StatusCodes = HttpStatusCodes.StatusCodes;
-
-app.get('/', (req, res) => {
-    res.send('Home page')
-});
-
-app.post('/api/tasks', Logger, async (req, res) => {
-    try {
-        const task = await TaskModel.create(req.body);
-        return res.status(StatusCodes.OK).json(task);
-    } catch (error) {
-        console.log(error);
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({error});
-    }
-});
-
-app.get('/api/tasks', async (req, res) => {
-    try {
-        const tasks = await TaskModel.find();
-        return res.status(StatusCodes.OK).json(tasks);
-    } catch (error) {
-        console.log(error);
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({error});
-    }
-});
 
 const serverStart = async () => {
     try {
