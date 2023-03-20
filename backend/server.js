@@ -25,7 +25,17 @@ app.post('/api/tasks', Logger, async (req, res) => {
         console.log(error);
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({error});
     }
-})
+});
+
+app.get('/api/tasks', async (req, res) => {
+    try {
+        const tasks = await TaskModel.find();
+        return res.status(StatusCodes.OK).json(tasks);
+    } catch (error) {
+        console.log(error);
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({error});
+    }
+});
 
 const serverStart = async () => {
     try {
