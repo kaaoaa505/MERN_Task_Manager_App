@@ -2,14 +2,16 @@ require('dotenv').config();
 
 const express = require('express');
 const DbConnect = require('./config/DbConnect');
+const Logger = require('./middlewares/Logger');
 
 const app = express();
+app.use(express.json());
 
 app.get('/', (req, res) => {
     res.send('Home page')
 });
 
-app.post('/api/tasks', (req, res) => {
+app.post('/api/tasks', Logger, (req, res) => {
     console.log(req.body);
     res.send('Task created successfully')
 })
