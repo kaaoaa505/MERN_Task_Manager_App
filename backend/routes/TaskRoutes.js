@@ -5,11 +5,11 @@ const { createTask, allTasks, getTask, deleteTask, updateTask, updateCompletedTa
 const Logger = require('../middlewares/Logger');
 
 const router = express.Router();
-router.post('/api/tasks', Logger, createTask);
-router.get('/api/tasks', allTasks);
-router.get('/api/tasks/:id', getTask);
-router.delete('/api/tasks/:id', deleteTask);
-router.put('/api/tasks/:id', updateTask);
-router.patch('/api/tasks/:id', updateCompletedTask);
+router.post('/', Logger, createTask);
+router.get('/', allTasks);
+router.get('/:id', getTask);
+router.delete('/:id', deleteTask);
+router.put('/:id', updateTask);
+router.patch('/:id', updateCompletedTask);
 
 module.exports = router;
