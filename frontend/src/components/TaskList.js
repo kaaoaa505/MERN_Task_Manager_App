@@ -105,6 +105,8 @@ const TaskList = (props) => {
             if (window.confirm('Are you sure?')) {
                 await axios.delete(`${backendTasksUrl}/${taskId}`);
 
+                toast.success('Task deleted successfully.')
+
                 await getTasks();
             }
         } catch (error) {
