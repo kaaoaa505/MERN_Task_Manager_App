@@ -1,26 +1,65 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import axios from 'axios';
+import $ from 'jquery';
 
 import Task from "./Task";
 import TaskForm from "./TaskForm";
+import { BACKEND_URL } from "../config/EnvVariables";
 
-const TaskList = () => {
-    const backendUrl = process.env.REACT_APP_BACKEND_URL;
-    const backendTasksUrl = `${backendUrl}/api/tasks`;
+import LoadingImage from '../assets/loader.gif';
 
-    let tasks = null;
+const TaskList = (props) => {
 
-    const tasksResonse = async () => {
-        return await axios.get(backendTasksUrl);
-    };
+    useEffect(() => {
+        // This runs only on mount (when the component appears)
 
-    if(tasks === null){
-        tasksResonse().then((response) => {
-            tasks = response.data;
-            console.log('---tasks is: ', tasks);
-        });
+        return () => {
+
+            // This runs only once
+
+            $(document).ready(function () {
+                console.log("document loaded");
+            });
+
+            $(window).on("load", function () {
+                console.log("window loaded");
+            });
+            console.log('Effect done.');
+        };
+    }, []);
+
+    const backendTasksUrl = `${BACKEND_URL}/api/tasks`;
+
+    // eslint-disable-next-line no-unused-vars
+    const [tasks, setTasks] = useState([]);
+
+    // eslint-disable-next-line no-unused-vars
+    const [isLoading, setIsLoading] = useState(false);
+
+    const getTasks = async () => {
+        setIsLoading(true);
+
+        try {
+            const { data } = await axios.get(backendTasksUrl);
+            setTasks(data);
+            setIsLoading(false);
+        } catch (error) {
+            console.log(error);
+            toast.error(error.message);
+            setIsLoading(false);
+        }
     }
+
+    useEffect(() => {
+        return async () => {
+            await getTasks();
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    // eslint-disable-next-line no-unused-vars
+    const [completedTasks, setCompletedTasks] = useState([]);
 
     const [formData, setFormData] = useState({
         name: '',
@@ -75,8 +114,28 @@ const TaskList = () => {
             </div>
 
             <hr />
+            {
+                isLoading && (
+                    <div className="--flex-center">
+                        <img src={LoadingImage} alt="loading..." />
+                    </div>
+                )
+            }
 
-            <Task />
+            {
+                !isLoading && tasks.length === 0 ? (
+                    <p>No task found.</p>
+                ) : (
+                    <>
+                    {
+                        tasks.map((task, index) => (
+                            <Task key={task._id} name={task.name} index={index + 1 } />
+                        ))
+                    }
+                    </>
+                )
+            }
+
         </div>
     );
 };
