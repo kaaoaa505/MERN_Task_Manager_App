@@ -1,0 +1,82 @@
+import { useState } from "react";
+import { toast } from "react-toastify";
+import axios from 'axios';
+
+import Task from "./Task";
+import TaskForm from "./TaskForm";
+
+const TaskList = () => {
+
+    let tasks = null;
+
+    const serverTasksUrl = 'http://localhost:4000/api/tasks';
+
+    const tasksResonse = async () => {
+        return await axios.get(serverTasksUrl);
+    };
+
+    if(tasks === null){
+        tasksResonse().then((response) => {
+            tasks = response.data;
+            console.log('---tasks is: ', tasks);
+        });
+    }
+
+    const [formData, setFormData] = useState({
+        name: '',
+        completed: false
+    });
+
+    const { name } = formData;
+
+    const handleNameInputChange = (event) => {
+        const { name, value } = event.target;
+
+        setFormData({
+            ...formData,
+            [name]: value
+        });
+    };
+
+    const handleTaskFormSubmit = async (event) => {
+        event.preventDefault();
+
+        if (name === '') return toast.error('Task name can not be empty.');
+
+        try {
+            await axios.post(serverTasksUrl, formData);
+
+            setFormData({
+                ...formData,
+                name: ''
+            });
+        } catch (error) {
+            console.log(error);
+
+            return toast.error(error.message);
+        }
+    };
+
+    return (
+        <div className="TaskListComponent">
+            <h2>Task Manager</h2>
+
+            <TaskForm handleTaskFormSubmit={handleTaskFormSubmit} name={name} handleNameInputChange={handleNameInputChange} />
+
+            <div className="--flex-between --pb">
+                <p>
+                    <b>Total Tasks: </b> 0
+                </p>
+                <p>
+                    <b>Completed Tasks: </b> 0
+                </p>
+            </div>
+
+            <hr />
+
+            <Task />
+        </div>
+    );
+};
+
+export default TaskList;

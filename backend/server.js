@@ -1,14 +1,24 @@
 require('dotenv').config();
 
 const express = require('express');
+const cors = require('cors');
 
 const DbConnect = require('./config/DbConnect');
 
 const taskRoutes = require('./routes/TaskRoutes');
 
 const app = express();
+
+// app.use(cors());
+app.use(cors({
+    origin: [
+        "http://localhost:3000"
+    ]
+}));
+
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
+
 app.use('/api/tasks', taskRoutes);
 
 app.get('/', (_req, res) => {
