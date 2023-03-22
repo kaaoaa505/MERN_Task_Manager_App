@@ -91,12 +91,28 @@ const TaskList = (props) => {
                 ...formData,
                 name: ''
             });
+
+            await getTasks();
         } catch (error) {
             console.log(error);
 
             return toast.error(error.message);
         }
     };
+
+    const deleteTask = async (taskId) => {
+        try {
+            if (window.confirm('Are you sure?')) {
+                await axios.delete(`${backendTasksUrl}/${taskId}`);
+
+                await getTasks();
+            }
+        } catch (error) {
+            console.log(error);
+
+            return toast.error(error.message);
+        }
+    }
 
     return (
         <div className="TaskListComponent">
@@ -123,15 +139,15 @@ const TaskList = (props) => {
             }
 
             {
-                !isLoading && tasks.length === 0 ? (
+                (isLoading || tasks.length === 0) ? (
                     <p>No task found.</p>
                 ) : (
                     <>
-                    {
-                        tasks.map((task, index) => (
-                            <Task key={task._id} name={task.name} index={index + 1 } />
-                        ))
-                    }
+                        {
+                            (tasks.length > 0) && tasks.map((task, index) => (
+                                <Task key={task._id} task={task} index={index + 1} deleteTask={deleteTask} />
+                            ))
+                        }
                     </>
                 )
             }
