@@ -122,7 +122,7 @@ const TaskList = (props) => {
 
             <div className="--flex-between --pb">
                 <p>
-                    <b>Total Tasks: </b> 0
+                    <b>Total Tasks: </b> {tasks.length}
                 </p>
                 <p>
                     <b>Completed Tasks: </b> 0

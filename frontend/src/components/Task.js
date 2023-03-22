@@ -13,7 +13,7 @@ const Task = ({ task, index, deleteTask }) => {
           <FaCheckDouble color="green" />
           <FaEdit color="blue" />
           <FaRegTrashAlt color="darkred" onClick={() => {
-            deleteTask(task.id)
+            deleteTask(task._id)
           }} />
         </div>
       </div>
