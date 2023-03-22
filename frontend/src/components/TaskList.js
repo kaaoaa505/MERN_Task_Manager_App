@@ -6,13 +6,13 @@ import Task from "./Task";
 import TaskForm from "./TaskForm";
 
 const TaskList = () => {
+    const backendUrl = process.env.REACT_APP_BACKEND_URL;
+    const backendTasksUrl = `${backendUrl}/api/tasks`;
 
     let tasks = null;
 
-    const serverTasksUrl = 'http://localhost:4000/api/tasks';
-
     const tasksResonse = async () => {
-        return await axios.get(serverTasksUrl);
+        return await axios.get(backendTasksUrl);
     };
 
     if(tasks === null){
@@ -44,7 +44,9 @@ const TaskList = () => {
         if (name === '') return toast.error('Task name can not be empty.');
 
         try {
-            await axios.post(serverTasksUrl, formData);
+            await axios.post(backendTasksUrl, formData);
+
+            toast.success('Task added successfully.')
 
             setFormData({
                 ...formData,
