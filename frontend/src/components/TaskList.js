@@ -13,9 +13,9 @@ const TaskList = (props) => {
 
     useEffect(() => {
         // This runs only on mount (when the component appears)
+        console.log('Effect start.' + new Date().toISOString());
 
         return () => {
-
             // This runs only once
 
             $(document).ready(function () {
@@ -25,7 +25,8 @@ const TaskList = (props) => {
             $(window).on("load", function () {
                 console.log("window loaded");
             });
-            console.log('Effect done.');
+
+            console.log('Effect return.');
         };
     }, []);
 
@@ -34,8 +35,11 @@ const TaskList = (props) => {
     // eslint-disable-next-line no-unused-vars
     const [tasks, setTasks] = useState([]);
 
-    // eslint-disable-next-line no-unused-vars
     const [isLoading, setIsLoading] = useState(false);
+
+    const [taskIdToEdit, setTaskIdToEdit] = useState('');
+
+    const [isEditing, setIsEditing] = useState(false);
 
     const getTasks = async () => {
         setIsLoading(true);
@@ -83,9 +87,15 @@ const TaskList = (props) => {
         if (name === '') return toast.error('Task name can not be empty.');
 
         try {
-            await axios.post(backendTasksUrl, formData);
-
-            toast.success('Task added successfully.')
+            if (isEditing) {
+                await axios.put(`${backendTasksUrl}/${taskIdToEdit}`, formData);
+                toast.success('Task updated successfully.');
+                setIsEditing(false);
+                setTaskIdToEdit('');
+            } else {
+                await axios.post(backendTasksUrl, formData);
+                toast.success('Task added successfully.');
+            }
 
             setFormData({
                 ...formData,
@@ -116,11 +126,42 @@ const TaskList = (props) => {
         }
     }
 
+    const getTaskForEdit = (task) => {
+        setFormData({
+            name: task.name,
+            completed: false
+        });
+
+        setTaskIdToEdit(task._id);
+
+        setIsEditing(true);
+    }
+
+    const setTaskToCompleted = async (task) => {
+        try {
+                await axios.patch(`${backendTasksUrl}/${task._id}`, {completed: !task.completed});
+
+                toast.success('Task set to completed successfully.')
+
+                await getTasks();
+        } catch (error) {
+            console.log(error);
+
+            return toast.error(error.message);
+        }
+    }
+
     return (
         <div className="TaskListComponent">
             <h2>Task Manager</h2>
 
-            <TaskForm handleTaskFormSubmit={handleTaskFormSubmit} name={name} handleNameInputChange={handleNameInputChange} />
+            <TaskForm
+                handleTaskFormSubmit={handleTaskFormSubmit}
+                name={name}
+                handleNameInputChange={handleNameInputChange}
+                taskIdToEdit={taskIdToEdit}
+                isEditing={isEditing}
+            />
 
             <div className="--flex-between --pb">
                 <p>
@@ -147,7 +188,14 @@ const TaskList = (props) => {
                     <>
                         {
                             (tasks.length > 0) && tasks.map((task, index) => (
-                                <Task key={task._id} task={task} index={index + 1} deleteTask={deleteTask} />
+                                <Task 
+                                key={task._id} 
+                                task={task} 
+                                index={index + 1} 
+                                deleteTask={deleteTask} 
+                                getTaskForEdit={getTaskForEdit}
+                                setTaskToCompleted={setTaskToCompleted}
+                                 />
                             ))
                         }
                     </>
