@@ -41,6 +41,8 @@ const TaskList = (props) => {
 
     const [isEditing, setIsEditing] = useState(false);
 
+    const [completedTasksCount, setCompletedTasksCount] = useState(0);
+
     const getTasks = async () => {
         setIsLoading(true);
 
@@ -48,6 +50,12 @@ const TaskList = (props) => {
             const { data } = await axios.get(backendTasksUrl);
             setTasks(data);
             setIsLoading(false);
+
+            const completedTasks = data.filter(task => {
+                return task.completed === true
+            }).length;
+            console.log(completedTasks);
+            setCompletedTasksCount(completedTasks);
         } catch (error) {
             console.log(error);
             toast.error(error.message);
@@ -63,7 +71,6 @@ const TaskList = (props) => {
     }, []);
 
     // eslint-disable-next-line no-unused-vars
-    const [completedTasks, setCompletedTasks] = useState([]);
 
     const [formData, setFormData] = useState({
         name: '',
@@ -168,7 +175,7 @@ const TaskList = (props) => {
                     <b>Total Tasks: </b> {tasks.length}
                 </p>
                 <p>
-                    <b>Completed Tasks: </b> 0
+                    <b>Completed Tasks: </b> {completedTasksCount}
                 </p>
             </div>
 
